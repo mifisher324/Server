@@ -1753,18 +1753,20 @@ bool Mob::Attack(Mob* other, int Hand, bool bRiposte, bool IsStrikethrough, bool
 	////// Send Attack Damage
 	///////////////////////////////////////////////////////////
 
-	/* Normal Critical hit message */
-	entity_list.FilteredMessageCloseString(
-		this, /* Sender */
-		false, /* Skip Sender */
-		RuleI(Range, CriticalDamage),
-		Chat::MeleeCrit, /* Type: 301 */
-		FilterMeleeCrits, /* FilterType: 12 */
-		CRITICAL_HIT, /* MessageFormat: %1 scores a critical hit! (%2) */
-		0,
-		GetCleanName(), /* Message1 */
-		itoa(my_hit.damage_done) /* Message2 */
-	);
+	if (my_hit.critical) {
+		/* Normal Critical hit message */
+		entity_list.FilteredMessageCloseString(
+			this, /* Sender */
+			false, /* Skip Sender */
+			RuleI(Range, CriticalDamage),
+			Chat::MeleeCrit, /* Type: 301 */
+			FilterMeleeCrits, /* FilterType: 12 */
+			CRITICAL_HIT, /* MessageFormat: %1 scores a critical hit! (%2) */
+			0,
+			GetCleanName(), /* Message1 */
+			itoa(my_hit.damage_done) /* Message2 */
+		);
+	}
 
 	other->Damage(this, my_hit.damage_done, SPELL_UNKNOWN, my_hit.skill, true, -1, false, m_specialattacks);
 
