@@ -6795,6 +6795,38 @@ void Mob::CommonOutgoingHitSuccess(Mob* defender, DamageHitInfo &hit, ExtraAttac
 			hit.damage_done -= hit.damage_done * defender->spellbonuses.ShieldTargetSpa[SBIndex::SHIELD_TARGET_MITIGATION_PERCENT] / 100;
 		}
 	}
+  if (hit.critical >= 1) {
+    int critType;
+    int dmg;
+    if (hit.critical == 1) { /* Regular Crit */
+      critType = CRITICAL_HIT;
+      dmg = hit.damage_done;
+    } 
+    else if (hit.critical == 2) { /* Crippling Blow */
+      critType = CRIPPLING_BLOW;
+      dmg = hit.damage_done;
+    }
+    else if (hit.critical == 3) { /* Slay Undead */
+      int slay_sex = GetGender() == Gender::Female ? FEMALE_SLAYUNDEAD : MALE_SLAYUNDEAD;
+      critType = slay_sex;
+      dmg = hit.damage_done;
+    }
+    else if (hit.critical == 5) { /* Deadly Strike */
+      critType = DEADLY_STRIKE;
+      dmg = hit.damage_done;
+    }
+    entity_list.FilteredMessageCloseString(
+	    this, /* Sender */
+	    false, /* Skip Sender */
+	    RuleI(Range, CriticalDamage),
+	    Chat::MeleeCrit, /* Type: 301 */
+	    FilterMeleeCrits, /* FilterType: 12 */
+	    critType, /* MessageFormat: %1 scores a critical hit! (%2) */
+	    0,
+	    GetCleanName(), /* Message1 */
+	    itoa(dmg) /* Message2 */
+    );
+  }
 
 	CheckNumHitsRemaining(NumHit::OutgoingHitSuccess);
 }
