@@ -1784,12 +1784,8 @@ bool Mob::Attack(Mob* other, int Hand, bool bRiposte, bool IsStrikethrough, bool
 	    itoa(dmg) /* Message2 */
     );
   }
-
-  if (GetTarget()) {
-    TriggerDefensiveProcs(other, Hand, true, my_hit.damage_done);
-  }
-
-	other->Damage(this, my_hit.damage_done, SPELL_UNKNOWN, my_hit.skill, true, -1, false, m_specialattacks);
+	
+  other->Damage(this, my_hit.damage_done, SPELL_UNKNOWN, my_hit.skill, true, -1, false, m_specialattacks);
 
 	if (CastToClient()->IsDead() || (IsBot() && GetAppearance() == eaDead)) {
 		return false;
@@ -1798,6 +1794,10 @@ bool Mob::Attack(Mob* other, int Hand, bool bRiposte, bool IsStrikethrough, bool
 	MeleeLifeTap(my_hit.damage_done);
 
 	CommonBreakInvisibleFromCombat();
+
+  if (GetTarget()) {
+    TriggerDefensiveProcs(other, Hand, true, my_hit.damage_done);
+  }
 
 	if (my_hit.damage_done > 0) {
 		return true;
