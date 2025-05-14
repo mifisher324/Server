@@ -385,40 +385,40 @@ void Mob::DoSpecialAttackDamage(Mob *who, EQ::skills::SkillType skill, int32 bas
 	}
 
 	TryCastOnSkillUse(who, skill);
-  if (my_hit.critical == 4) {
-    entity_list.FilteredMessageClose(
-      this,
-      false,
-		  RuleI(Range, CriticalDamage),
+	if (my_hit.critical == 4) {
+		entity_list.FilteredMessageClose(
+			this,
+			false,
+			RuleI(Range, CriticalDamage),
 			Chat::MeleeCrit, /* Type: 301 */
 			FilterMeleeCrits, /* FilterType: 12 */
-      "%s lands a Cleaving Blow! (%i)",
-      GetCleanName(),
-      my_hit.damage_done
-    );
-  }
-  else if (my_hit.critical >= 1 && my_hit.critical != 4) {
-    int critType;
-    int dmg;
-    if (my_hit.critical == 1) { /* Crippling Blow */
-      critType = CRITICAL_HIT;
-      dmg = my_hit.damage_done;
-    }
-    else if (my_hit.critical == 2) { /* Crippling Blow */
-      critType = CRIPPLING_BLOW;
-      dmg = my_hit.damage_done;
-    }
-    else if (my_hit.critical == 3) { /* Slay Undead */
-      int slay_sex = GetGender() == Gender::Female ? FEMALE_SLAYUNDEAD : MALE_SLAYUNDEAD;
-      critType = slay_sex;
-      dmg = my_hit.damage_done;
-    }
-    else if (my_hit.critical == 5) { /* Deadly Strike */
-      critType = DEADLY_STRIKE;
-      dmg = my_hit.damage_done + my_hit.min_damage;
-    }
+			"%s lands a Cleaving Blow! (%i)",
+			GetCleanName(),
+			my_hit.damage_done
+		);
+	}
+	else if (my_hit.critical >= 1 && my_hit.critical != 4) {
+		int critType;
+		int dmg;
+		if (my_hit.critical == 1) { /* Crippling Blow */
+			critType = CRITICAL_HIT;
+			dmg = my_hit.damage_done;
+		}
+		else if (my_hit.critical == 2) { /* Crippling Blow */
+			critType = CRIPPLING_BLOW;
+			dmg = my_hit.damage_done;
+		}
+		else if (my_hit.critical == 3) { /* Slay Undead */
+			int slay_sex = GetGender() == Gender::Female ? FEMALE_SLAYUNDEAD : MALE_SLAYUNDEAD;
+			critType = slay_sex;
+			dmg = my_hit.damage_done;
+		}
+		else if (my_hit.critical == 5) { /* Deadly Strike */
+			critType = DEADLY_STRIKE;
+			dmg = my_hit.damage_done + my_hit.min_damage;
+		}
 		entity_list.FilteredMessageCloseString(
-		  this, /* Sender */
+			this, /* Sender */
 			false, /* Skip Sender */
 			RuleI(Range, CriticalDamage),
 			Chat::MeleeCrit, /* Type: 301 */

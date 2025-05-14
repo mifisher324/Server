@@ -911,7 +911,7 @@ struct DamageHitInfo {
 	int tohit;
 	int hand;
 	EQ::skills::SkillType skill;
-  int critical = 0;
+	int critical = 0;
 };
 
 struct DataBucketCache

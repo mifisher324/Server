@@ -1774,18 +1774,17 @@ bool Mob::Attack(Mob* other, int Hand, bool bRiposte, bool IsStrikethrough, bool
 	    	}
 	    	entity_list.FilteredMessageCloseString(
 			this, /* Sender */
-		    	false, /* Skip Sender */
-		    	RuleI(Range, CriticalDamage),
-		    	Chat::MeleeCrit, /* Type: 301 */
-		    	FilterMeleeCrits, /* FilterType: 12 */
-		    	critType, /* MessageFormat: %1 scores a critical hit! (%2) */
-		    	0,
-		    	GetCleanName(), /* Message1 */
-		    	itoa(dmg) /* Message2 */
-	    	);
+			false, /* Skip Sender */
+			RuleI(Range, CriticalDamage),
+			Chat::MeleeCrit, /* Type: 301 */
+			FilterMeleeCrits, /* FilterType: 12 */
+			critType, /* MessageFormat: %1 scores a critical hit! (%2) */
+			0,
+			GetCleanName(), /* Message1 */
+			itoa(dmg) /* Message2 */
+		);
 	}
-	
-        other->Damage(this, my_hit.damage_done, SPELL_UNKNOWN, my_hit.skill, true, -1, false, m_specialattacks);
+	other->Damage(this, my_hit.damage_done, SPELL_UNKNOWN, my_hit.skill, true, -1, false, m_specialattacks);
 
 	if (CastToClient()->IsDead() || (IsBot() && GetAppearance() == eaDead)) {
 		return false;
@@ -1795,9 +1794,9 @@ bool Mob::Attack(Mob* other, int Hand, bool bRiposte, bool IsStrikethrough, bool
 
 	CommonBreakInvisibleFromCombat();
 
-  	if (GetTarget()) {
-    		TriggerDefensiveProcs(other, Hand, true, my_hit.damage_done);
-  	}
+	if (GetTarget()) {
+		TriggerDefensiveProcs(other, Hand, true, my_hit.damage_done);
+	}
 
 	if (my_hit.damage_done > 0) {
 		return true;
