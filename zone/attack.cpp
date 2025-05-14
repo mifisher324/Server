@@ -5822,7 +5822,7 @@ void Mob::TryCriticalHit(Mob *defender, DamageHitInfo &hit, ExtraAttackOptions *
 	if (IsBerserk() || berserk) {
 		hit.damage_done += og_damage * 119 / 100;
 		LogCombat("Crip damage [{}]", hit.damage_done);
-    hit.critical = 2;
+    		hit.critical = 2;
 		// Crippling blows also have a chance to stun
 		// Kayen: Crippling Blow would cause a chance to interrupt for npcs < 55, with a
 		// staggers message.
