@@ -1752,40 +1752,40 @@ bool Mob::Attack(Mob* other, int Hand, bool bRiposte, bool IsStrikethrough, bool
 	///////////////////////////////////////////////////////////
 	////// Send Attack Damage
 	///////////////////////////////////////////////////////////
-  if (my_hit.critical >= 1) {
-    int critType;
-    int dmg;
-    if (my_hit.critical == 1) { /* Regular Crit */
-      critType = CRITICAL_HIT;
-      dmg = my_hit.damage_done;
-    } 
-    else if (my_hit.critical == 2) { /* Crippling Blow */
-      critType = CRIPPLING_BLOW;
-      dmg = my_hit.damage_done;
-    }
-    else if (my_hit.critical == 3) { /* Slay Undead */
-      int slay_sex = GetGender() == Gender::Female ? FEMALE_SLAYUNDEAD : MALE_SLAYUNDEAD;
-      critType = slay_sex;
-      dmg = my_hit.damage_done;
-    }
-    else if (my_hit.critical == 5) { /* Deadly Strike */
-      critType = DEADLY_STRIKE;
-      dmg = my_hit.damage_done;
-    }
-    entity_list.FilteredMessageCloseString(
-	    this, /* Sender */
-	    false, /* Skip Sender */
-	    RuleI(Range, CriticalDamage),
-	    Chat::MeleeCrit, /* Type: 301 */
-	    FilterMeleeCrits, /* FilterType: 12 */
-	    critType, /* MessageFormat: %1 scores a critical hit! (%2) */
-	    0,
-	    GetCleanName(), /* Message1 */
-	    itoa(dmg) /* Message2 */
-    );
-  }
+	if (my_hit.critical >= 1) {
+		int critType;
+		int dmg;
+	    	if (my_hit.critical == 1) { /* Regular Crit */
+	      		critType = CRITICAL_HIT;
+	      		dmg = my_hit.damage_done;
+	    	} 
+	    	else if (my_hit.critical == 2) { /* Crippling Blow */
+	      		critType = CRIPPLING_BLOW;
+	      		dmg = my_hit.damage_done;
+	    	}
+	    	else if (my_hit.critical == 3) { /* Slay Undead */
+	      		int slay_sex = GetGender() == Gender::Female ? FEMALE_SLAYUNDEAD : MALE_SLAYUNDEAD;
+	      		critType = slay_sex;
+	      		dmg = my_hit.damage_done;
+	    	}
+	    	else if (my_hit.critical == 5) { /* Deadly Strike */
+	      		critType = DEADLY_STRIKE;
+	      		dmg = my_hit.damage_done;
+	    	}
+	    	entity_list.FilteredMessageCloseString(
+			this, /* Sender */
+		    	false, /* Skip Sender */
+		    	RuleI(Range, CriticalDamage),
+		    	Chat::MeleeCrit, /* Type: 301 */
+		    	FilterMeleeCrits, /* FilterType: 12 */
+		    	critType, /* MessageFormat: %1 scores a critical hit! (%2) */
+		    	0,
+		    	GetCleanName(), /* Message1 */
+		    	itoa(dmg) /* Message2 */
+	    	);
+	}
 	
-  other->Damage(this, my_hit.damage_done, SPELL_UNKNOWN, my_hit.skill, true, -1, false, m_specialattacks);
+        other->Damage(this, my_hit.damage_done, SPELL_UNKNOWN, my_hit.skill, true, -1, false, m_specialattacks);
 
 	if (CastToClient()->IsDead() || (IsBot() && GetAppearance() == eaDead)) {
 		return false;
@@ -1795,9 +1795,9 @@ bool Mob::Attack(Mob* other, int Hand, bool bRiposte, bool IsStrikethrough, bool
 
 	CommonBreakInvisibleFromCombat();
 
-  if (GetTarget()) {
-    TriggerDefensiveProcs(other, Hand, true, my_hit.damage_done);
-  }
+  	if (GetTarget()) {
+    		TriggerDefensiveProcs(other, Hand, true, my_hit.damage_done);
+  	}
 
 	if (my_hit.damage_done > 0) {
 		return true;
@@ -5730,7 +5730,7 @@ void Mob::TryCriticalHit(Mob *defender, DamageHitInfo &hit, ExtraAttackOptions *
 
 				LogCombatDetail("Final Slayundead damage [{}]", hit.damage_done);
 
-        hit.critical = 3;
+        			hit.critical = 3;
 				return;
 			}
 		}
@@ -5789,7 +5789,7 @@ void Mob::TryCriticalHit(Mob *defender, DamageHitInfo &hit, ExtraAttackOptions *
 		hit.damage_done = hit.damage_done + (hit.damage_done * scale);
 		hit.min_damage  = hit.min_damage  + (hit.min_damage + scale);
 
-    hit.critical = 4;
+    		hit.critical = 4;
 		return;
 	}
 
@@ -5805,7 +5805,7 @@ void Mob::TryCriticalHit(Mob *defender, DamageHitInfo &hit, ExtraAttackOptions *
 					return;
 				}
 				hit.damage_done = hit.damage_done * 200 / 100;
-        hit.critical = 5;
+        			hit.critical = 5;
 				return;
 			}
 		}
@@ -5840,7 +5840,6 @@ void Mob::TryCriticalHit(Mob *defender, DamageHitInfo &hit, ExtraAttackOptions *
 		}
 		return;
 	}
-
 	hit.critical = 1;
 }
 
@@ -6799,39 +6798,38 @@ void Mob::CommonOutgoingHitSuccess(Mob* defender, DamageHitInfo &hit, ExtraAttac
 			hit.damage_done -= hit.damage_done * defender->spellbonuses.ShieldTargetSpa[SBIndex::SHIELD_TARGET_MITIGATION_PERCENT] / 100;
 		}
 	}
-  if (hit.critical >= 1) {
-    int critType;
-    int dmg;
-    if (hit.critical == 1) { /* Regular Crit */
-      critType = CRITICAL_HIT;
-      dmg = hit.damage_done;
-    } 
-    else if (hit.critical == 2) { /* Crippling Blow */
-      critType = CRIPPLING_BLOW;
-      dmg = hit.damage_done;
-    }
-    else if (hit.critical == 3) { /* Slay Undead */
-      int slay_sex = GetGender() == Gender::Female ? FEMALE_SLAYUNDEAD : MALE_SLAYUNDEAD;
-      critType = slay_sex;
-      dmg = hit.damage_done;
-    }
-    else if (hit.critical == 5) { /* Deadly Strike */
-      critType = DEADLY_STRIKE;
-      dmg = hit.damage_done;
-    }
-    entity_list.FilteredMessageCloseString(
-	    this, /* Sender */
-	    false, /* Skip Sender */
-	    RuleI(Range, CriticalDamage),
-	    Chat::MeleeCrit, /* Type: 301 */
-	    FilterMeleeCrits, /* FilterType: 12 */
-	    critType, /* MessageFormat: %1 scores a critical hit! (%2) */
-	    0,
-	    GetCleanName(), /* Message1 */
-	    itoa(dmg) /* Message2 */
-    );
-  }
-
+	if (hit.critical >= 1) {
+		int critType;
+	    	int dmg;
+	    	if (hit.critical == 1) { /* Regular Crit */
+	      		critType = CRITICAL_HIT;
+	      		dmg = hit.damage_done;
+	    	} 
+	    	else if (hit.critical == 2) { /* Crippling Blow */
+	      		critType = CRIPPLING_BLOW;
+	      		dmg = hit.damage_done;
+	    	}
+	    	else if (hit.critical == 3) { /* Slay Undead */
+	      		int slay_sex = GetGender() == Gender::Female ? FEMALE_SLAYUNDEAD : MALE_SLAYUNDEAD;
+	      		critType = slay_sex;
+	      		dmg = hit.damage_done;
+	    	}
+	    	else if (hit.critical == 5) { /* Deadly Strike */
+	      		critType = DEADLY_STRIKE;
+	      		dmg = hit.damage_done;
+	    	}
+	    	entity_list.FilteredMessageCloseString(
+			this, /* Sender */
+		    	false, /* Skip Sender */
+		    	RuleI(Range, CriticalDamage),
+		    	Chat::MeleeCrit, /* Type: 301 */
+		    	FilterMeleeCrits, /* FilterType: 12 */
+		    	critType, /* MessageFormat: %1 scores a critical hit! (%2) */
+		    	0,
+		    	GetCleanName(), /* Message1 */
+		    	itoa(dmg) /* Message2 */
+	    	);
+	}
 	CheckNumHitsRemaining(NumHit::OutgoingHitSuccess);
 }
 
