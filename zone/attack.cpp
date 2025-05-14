@@ -1785,6 +1785,10 @@ bool Mob::Attack(Mob* other, int Hand, bool bRiposte, bool IsStrikethrough, bool
     );
   }
 
+  if (GetTarget()) {
+    TriggerDefensiveProcs(other, Hand, true, my_hit.damage_done);
+  }
+
 	other->Damage(this, my_hit.damage_done, SPELL_UNKNOWN, my_hit.skill, true, -1, false, m_specialattacks);
 
 	if (CastToClient()->IsDead() || (IsBot() && GetAppearance() == eaDead)) {
