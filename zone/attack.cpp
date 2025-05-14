@@ -1752,21 +1752,38 @@ bool Mob::Attack(Mob* other, int Hand, bool bRiposte, bool IsStrikethrough, bool
 	///////////////////////////////////////////////////////////
 	////// Send Attack Damage
 	///////////////////////////////////////////////////////////
-
-	if (my_hit.critical) {
-		/* Normal Critical hit message */
-		entity_list.FilteredMessageCloseString(
-			this, /* Sender */
-			false, /* Skip Sender */
-			RuleI(Range, CriticalDamage),
-			Chat::MeleeCrit, /* Type: 301 */
-			FilterMeleeCrits, /* FilterType: 12 */
-			CRITICAL_HIT, /* MessageFormat: %1 scores a critical hit! (%2) */
-			0,
-			GetCleanName(), /* Message1 */
-			itoa(my_hit.damage_done) /* Message2 */
-		);
-	}
+  if (my_hit.critical >= 1) {
+    int critType;
+    int dmg;
+    if (my_hit.critical == 1) { /* Regular Crit */
+      critType = CRITICAL_HIT;
+      dmg = my_hit.damage_done;
+    } 
+    else if (my_hit.critical == 2) { /* Crippling Blow */
+      critType = CRIPPLING_BLOW;
+      dmg = my_hit.damage_done;
+    }
+    else if (my_hit.critical == 3) { /* Slay Undead */
+      int slay_sex = GetGender() == Gender::Female ? FEMALE_SLAYUNDEAD : MALE_SLAYUNDEAD;
+      critType = slay_sex;
+      dmg = my_hit.damage_done;
+    }
+    else if (my_hit.critical == 5) { /* Deadly Strike */
+      critType = DEADLY_STRIKE;
+      dmg = my_hit.damage_done;
+    }
+    entity_list.FilteredMessageCloseString(
+	    this, /* Sender */
+	    false, /* Skip Sender */
+	    RuleI(Range, CriticalDamage),
+	    Chat::MeleeCrit, /* Type: 301 */
+	    FilterMeleeCrits, /* FilterType: 12 */
+	    critType, /* MessageFormat: %1 scores a critical hit! (%2) */
+	    0,
+	    GetCleanName(), /* Message1 */
+	    itoa(dmg) /* Message2 */
+    );
+  }
 
 	other->Damage(this, my_hit.damage_done, SPELL_UNKNOWN, my_hit.skill, true, -1, false, m_specialattacks);
 
@@ -1777,10 +1794,6 @@ bool Mob::Attack(Mob* other, int Hand, bool bRiposte, bool IsStrikethrough, bool
 	MeleeLifeTap(my_hit.damage_done);
 
 	CommonBreakInvisibleFromCombat();
-
-	if (GetTarget()) {
-		TriggerDefensiveProcs(other, Hand, true, my_hit.damage_done);
-	}
 
 	if (my_hit.damage_done > 0) {
 		return true;
@@ -5713,19 +5726,7 @@ void Mob::TryCriticalHit(Mob *defender, DamageHitInfo &hit, ExtraAttackOptions *
 
 				LogCombatDetail("Final Slayundead damage [{}]", hit.damage_done);
 
-				int slay_sex = GetGender() == Gender::Female ? FEMALE_SLAYUNDEAD : MALE_SLAYUNDEAD;
-
-				entity_list.FilteredMessageCloseString(
-					this, /* Sender */
-					false, /* Skip Sender */
-					RuleI(Range, CriticalDamage),
-					Chat::MeleeCrit, /* Type: 301 */
-					FilterMeleeCrits, /* FilterType: 12 */
-					slay_sex,
-					0,
-					GetCleanName(), /* Message1 */
-					itoa(hit.damage_done) /* Message2 */
-					);
+        hit.critical = 3;
 				return;
 			}
 		}
@@ -5784,14 +5785,7 @@ void Mob::TryCriticalHit(Mob *defender, DamageHitInfo &hit, ExtraAttackOptions *
 		hit.damage_done = hit.damage_done + (hit.damage_done * scale);
 		hit.min_damage  = hit.min_damage  + (hit.min_damage + scale);
 
-		entity_list.FilteredMessageClose(this,
-											false,
-											RuleI(Range, CriticalDamage),
-											Chat::MeleeCrit,
-											FilterMeleeCrits,
-											"%s lands a Cleaving Blow! (%i)",
-											GetCleanName(),
-											hit.damage_done + hit.min_damage);
+    hit.critical = 4;
 		return;
 	}
 
@@ -5807,18 +5801,7 @@ void Mob::TryCriticalHit(Mob *defender, DamageHitInfo &hit, ExtraAttackOptions *
 					return;
 				}
 				hit.damage_done = hit.damage_done * 200 / 100;
-
-				entity_list.FilteredMessageCloseString(
-					this, /* Sender */
-					false, /* Skip Sender */
-					RuleI(Range, CriticalDamage),
-					Chat::MeleeCrit, /* Type: 301 */
-					FilterMeleeCrits, /* FilterType: 12 */
-					DEADLY_STRIKE, /* MessageFormat: %1 scores a Deadly Strike!(%2) */
-					0,
-					GetCleanName(), /* Message1 */
-					itoa(hit.damage_done + hit.min_damage) /* Message2 */
-				);
+        hit.critical = 5;
 				return;
 			}
 		}
@@ -5836,19 +5819,7 @@ void Mob::TryCriticalHit(Mob *defender, DamageHitInfo &hit, ExtraAttackOptions *
 	if (IsBerserk() || berserk) {
 		hit.damage_done += og_damage * 119 / 100;
 		LogCombat("Crip damage [{}]", hit.damage_done);
-
-		entity_list.FilteredMessageCloseString(
-			this, /* Sender */
-			false, /* Skip Sender */
-			RuleI(Range, CriticalDamage),
-			Chat::MeleeCrit, /* Type: 301 */
-			FilterMeleeCrits, /* FilterType: 12 */
-			CRIPPLING_BLOW, /* MessageFormat: %1 lands a Crippling Blow!(%2) */
-			0,
-			GetCleanName(), /* Message1 */
-			itoa(hit.damage_done + hit.min_damage) /* Message2 */
-		);
-
+    hit.critical = 2;
 		// Crippling blows also have a chance to stun
 		// Kayen: Crippling Blow would cause a chance to interrupt for npcs < 55, with a
 		// staggers message.
@@ -5866,7 +5837,7 @@ void Mob::TryCriticalHit(Mob *defender, DamageHitInfo &hit, ExtraAttackOptions *
 		return;
 	}
 
-	hit.critical = true;
+	hit.critical = 1;
 }
 
 bool Mob::TryFinishingBlow(Mob *defender, int64 &damage)
