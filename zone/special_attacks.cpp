@@ -385,7 +385,7 @@ void Mob::DoSpecialAttackDamage(Mob *who, EQ::skills::SkillType skill, int32 bas
 	}
 
 	TryCastOnSkillUse(who, skill);
-	
+
 	if (HasSkillProcs()) {
 		TrySkillProc(who, skill, ReuseTime * 1000);
 	}
