@@ -1953,9 +1953,8 @@ void Mob::DoThrowingAttackDmg(Mob *other, const EQ::ItemInstance *RangeWeapon, c
 	}
 
 	int64 TotalDmg = 0;
-
+	DamageHitInfo my_hit {};
 	if (WDmg > 0) {
-		DamageHitInfo my_hit {};
 		my_hit.base_damage = WDmg;
 		my_hit.min_damage = 0;
 		my_hit.damage_done = 1;
@@ -1982,6 +1981,7 @@ void Mob::DoThrowingAttackDmg(Mob *other, const EQ::ItemInstance *RangeWeapon, c
 		TotalDmg = (WDmg + GetHeroicSTR() + GetHeroicDEX());
 	}
 
+	ReportCriticalHit(my_hit);
 	MeleeLifeTap(TotalDmg);
 	other->Damage(this, TotalDmg, SPELL_UNKNOWN, EQ::skills::SkillThrowing);
 
@@ -2010,7 +2010,6 @@ void Mob::DoThrowingAttackDmg(Mob *other, const EQ::ItemInstance *RangeWeapon, c
 			}
 		}
 	}
-
 	if (IsClient()) {
 		CastToClient()->CheckIncreaseSkill(EQ::skills::SkillThrowing, GetTarget());
 
