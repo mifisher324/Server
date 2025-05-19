@@ -385,7 +385,7 @@ void Mob::DoSpecialAttackDamage(Mob *who, EQ::skills::SkillType skill, int32 bas
 	}
 
 	TryCastOnSkillUse(who, skill);
-
+	ReportCriticalHit(my_hit);
 	if (HasSkillProcs()) {
 		TrySkillProc(who, skill, ReuseTime * 1000);
 	}
@@ -1376,6 +1376,7 @@ void Mob::DoArcheryAttackDmg(Mob *other, const EQ::ItemInstance *RangeWeapon, co
 		my_hit.hand = EQ::invslot::slotRange;
 
 		DoAttack(other, my_hit);
+		ReportCriticalHit(my_hit);
 		TotalDmg = my_hit.damage_done;
 	} else {
 		TotalDmg = DMG_INVULNERABLE;
