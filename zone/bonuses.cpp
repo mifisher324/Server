@@ -249,12 +249,15 @@ void Mob::ProcessItemCaps()
 
 	itembonuses.ATK = std::min(itembonuses.ATK, CalcItemATKCap());
 
-	if (IsOfClientBotMerc() && itembonuses.SpellDmg > RuleI(Character, ItemSpellDmgCap)) {
-		itembonuses.SpellDmg = RuleI(Character, ItemSpellDmgCap);
+
+	int spell_cap = RuleI(Character, ItemSpellDmgCap) + (GetHeroicINT() * RuleR(Character, ItemSpellDmgCapHInt));
+	if (IsOfClientBotMerc() && itembonuses.SpellDmg > spell_cap) {
+		itembonuses.SpellDmg = spell_cap;
 	}
 
-	if (IsOfClientBotMerc() && itembonuses.HealAmt > RuleI(Character, ItemHealAmtCap)) {
-		itembonuses.HealAmt = RuleI(Character, ItemHealAmtCap);
+	int heal_cap = RuleI(Character, ItemHealAmtCap) + (GetHeroicWIS() * RuleR(Character, ItemHealAmtCapHWis));
+	if (IsOfClientBotMerc() && itembonuses.HealAmt > heal_cap) {
+		itembonuses.HealAmt = heal_cap;
 	}
 }
 
@@ -365,8 +368,10 @@ void Mob::AddItemBonuses(const EQ::ItemInstance* inst, StatBonuses* b, bool is_a
 	b->HitChance        = CalcCappedItemBonus(b->HitChance, item->Accuracy, RuleI(Character, ItemAccuracyCap));
 	b->ProcChance       = CalcCappedItemBonus(b->ProcChance, item->CombatEffects, RuleI(Character, ItemCombatEffectsCap));
 	b->DoTShielding     = CalcCappedItemBonus(b->DoTShielding, item->DotShielding, RuleI(Character, ItemDoTShieldingCap));
-	b->HealAmt          = CalcCappedItemBonus(b->HealAmt, item->HealAmt, RuleI(Character, ItemHealAmtCap));
-	b->SpellDmg         = CalcCappedItemBonus(b->SpellDmg, item->SpellDmg, RuleI(Character, ItemSpellDmgCap));
+	int heal_amt_cap = RuleI(Character, ItemHealAmtCap) + (b->HeroicWIS * RuleR(Character, ItemHealAmtCapHWis));
+	b->HealAmt          = CalcCappedItemBonus(b->HealAmt, item->HealAmt, heal_amt_cap);
+	int spell_dmg_cap = RuleI(Character, ItemSpellDmgCap) + (b->HeroicINT * RuleR(Character, ItemSpellDmgCapHInt));
+	b->SpellDmg         = CalcCappedItemBonus(b->SpellDmg, item->SpellDmg, spell_dmg_cap);
 	b->Clairvoyance     = CalcCappedItemBonus(b->Clairvoyance, item->Clairvoyance, RuleI(Character, ItemClairvoyanceCap));
 	b->DSMitigation     = CalcCappedItemBonus(b->DSMitigation, item->DSMitigation, RuleI(Character, ItemDSMitigationCap));
 

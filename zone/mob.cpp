@@ -2575,20 +2575,22 @@ void Mob::SendStatsWindow(Client* c, bool use_window)
 
 	// Heal Amount
 	if (GetHealAmt()) {
+		int heal_cap = RuleI(Character, ItemHealAmtCap) + (GetHeroicINT() * RuleR(Character, ItemHealAmtCapHWis));
 		final_string += fmt::format(
 			"Heal Amount: {} / {}{}",
 			Strings::Commify(GetHealAmt()),
-			Strings::Commify(RuleI(Character, ItemHealAmtCap)),
+			Strings::Commify(heal_cap),
 			DialogueWindow::Break(1)
 		);
 	}
 
 	// Heal Amount
 	if (GetSpellDmg()) {
+		int dmg_cap = RuleI(Character, ItemSpellDmgCap) + (GetHeroicINT() * RuleR(Character, ItemSpellDmgCapHInt));
 		final_string += fmt::format(
 			"Spell Damage: {} / {}{}",
 			Strings::Commify(GetSpellDmg()),
-			Strings::Commify(RuleI(Character, ItemSpellDmgCap)),
+			Strings::Commify(dmg_cap),
 			DialogueWindow::Break(1)
 		);
 	}
