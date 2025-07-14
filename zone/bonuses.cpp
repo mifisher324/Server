@@ -106,6 +106,8 @@ void Client::CalcBonuses()
 	CalcMaxMana();
 	CalcMaxEndurance();
 
+	//CalcSDAndHA(&itembonuses);
+
 	SetAttackTimer();
 
 	rooted = FindType(SE_Root);
@@ -249,12 +251,22 @@ void Mob::ProcessItemCaps()
 
 	itembonuses.ATK = std::min(itembonuses.ATK, CalcItemATKCap());
 
-	if (IsOfClientBotMerc() && itembonuses.SpellDmg > RuleI(Character, ItemSpellDmgCap)) {
-		itembonuses.SpellDmg = RuleI(Character, ItemSpellDmgCap);
+	int clair = CastToClient()->GetClair();
+	int dmg_max = RuleI(Character, ItemSpellDmgCap);
+	if (RuleB(Character, ClairvoyanceIncreaseCaps)) {
+		dmg_max += clair;
 	}
 
-	if (IsOfClientBotMerc() && itembonuses.HealAmt > RuleI(Character, ItemHealAmtCap)) {
-		itembonuses.HealAmt = RuleI(Character, ItemHealAmtCap);
+	if (IsOfClientBotMerc() && itembonuses.SpellDmg > dmg_max) {
+		itembonuses.SpellDmg = dmg_max;
+	}
+
+	int amt_max = RuleI(Character, ItemHealAmtCap);
+	if (RuleB(Character, ClairvoyanceIncreaseCaps)) {
+		amt_max += clair;
+	}
+	if (IsOfClientBotMerc() && itembonuses.HealAmt > amt_max) {
+		itembonuses.HealAmt = amt_max;
 	}
 }
 
@@ -365,10 +377,15 @@ void Mob::AddItemBonuses(const EQ::ItemInstance* inst, StatBonuses* b, bool is_a
 	b->HitChance        = CalcCappedItemBonus(b->HitChance, item->Accuracy, RuleI(Character, ItemAccuracyCap));
 	b->ProcChance       = CalcCappedItemBonus(b->ProcChance, item->CombatEffects, RuleI(Character, ItemCombatEffectsCap));
 	b->DoTShielding     = CalcCappedItemBonus(b->DoTShielding, item->DotShielding, RuleI(Character, ItemDoTShieldingCap));
-	b->HealAmt          = CalcCappedItemBonus(b->HealAmt, item->HealAmt, RuleI(Character, ItemHealAmtCap));
-	b->SpellDmg         = CalcCappedItemBonus(b->SpellDmg, item->SpellDmg, RuleI(Character, ItemSpellDmgCap));
 	b->Clairvoyance     = CalcCappedItemBonus(b->Clairvoyance, item->Clairvoyance, RuleI(Character, ItemClairvoyanceCap));
+	//b->HealAmt          = CalcCappedItemBonus(b->HealAmt, item->HealAmt, (RuleI(Character, ItemHealAmtCap) + b->Clairvoyance));
+	//b->SpellDmg         = CalcCappedItemBonus(b->SpellDmg, item->SpellDmg, (RuleI(Character, ItemSpellDmgCap) + b->Clairvoyance));
 	b->DSMitigation     = CalcCappedItemBonus(b->DSMitigation, item->DSMitigation, RuleI(Character, ItemDSMitigationCap));
+	
+	//Special Case: These will be modified later by Clairvoyance
+	b->SpellDmg	    += CalcItemBonus(item->SpellDmg);
+	b->HealAmt	    += CalcItemBonus(item->HealAmt);
+
 
 	if (b->haste < item->Haste) {
 		b->haste = item->Haste;

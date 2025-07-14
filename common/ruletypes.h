@@ -80,6 +80,8 @@ RULE_INT(Character, EnduranceRegenMultiplier, 100, "The endurance regeneration i
 RULE_BOOL(Character, OldMinMana, false, "This is used for servers that want to follow older skill cap formulas so they can still have some regen w/o mediate")
 RULE_BOOL(Character, HealOnLevel, false, "Setting whether a player should heal completely when leveling")
 RULE_BOOL(Character, FeignKillsPet, false, "Setting whether Feign Death kills the player pet")
+RULE_BOOL(Character, ClairvoyanceRefundsMana, false, "Set this in order to use the original mana restoring behavior of Clairvoyance")
+RULE_BOOL(Character, ClairvoyanceIncreaseCaps, false, "Set this to increase Spell Damage and Healing Amount caps by the amount of Clairvoyance, capped by the limit of Clairvoyance")
 RULE_INT(Character, ItemManaRegenCap, 15, "Limit on mana regeneration granted by items")
 RULE_INT(Character, ItemHealthRegenCap, 30, "Limit on health regeneration granted by items")
 RULE_INT(Character, ItemDamageShieldCap, 30, "Limit on damage shields granted by items")

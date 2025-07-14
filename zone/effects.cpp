@@ -808,15 +808,17 @@ int32 Mob::GetActSpellCost(uint16 spell_id, int32 cost)
 	if (FrenziedDevastation && IsPureNukeSpell(spell_id))
 		cost *= 2;
 
-	// Formula = Unknown exact, based off a random percent chance up to mana cost(after focuses) of the cast spell
-	if(itembonuses.Clairvoyance && spells[spell_id].classes[(GetClass()%17) - 1] >= GetLevel() - 5)
-	{
-		int mana_back = itembonuses.Clairvoyance * zone->random.Int(1, 100) / 100;
-		// Doesnt generate mana, so best case is a free spell
-		if(mana_back > cost)
-			mana_back = cost;
+	if (RuleB(Character, ClairvoyanceRefundsMana)) {
+		// Formula = Unknown exact, based off a random percent chance up to mana cost(after focuses) of the cast spell
+		if(itembonuses.Clairvoyance && spells[spell_id].classes[(GetClass()%17) - 1] >= GetLevel() - 5)
+		{
+			int mana_back = itembonuses.Clairvoyance * zone->random.Int(1, 100) / 100;
+			// Doesnt generate mana, so best case is a free spell
+			if(mana_back > cost)
+				mana_back = cost;
 
-		cost -= mana_back;
+			cost -= mana_back;
+		}
 	}
 
 	int spec = GetSpecializeSkillValue(spell_id);

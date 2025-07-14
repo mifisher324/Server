@@ -474,12 +474,20 @@ inline std::string GetMobAttributeByString(Mob *mob, const std::string &attribut
 				   Strings::Commify(std::to_string(RuleI(Character, ItemCombatEffectsCap)));
 		}
 		if (attribute == "heal_amount") {
+			int amount_cap = RuleI(Character, ItemHealAmtCap);
+			if (RuleB(Character, ClairvoyanceIncreaseCaps)) {
+				amount_cap += client->GetClair();
+			}
 			return Strings::Commify(std::to_string(client->GetHealAmt())) + " / " +
-				   Strings::Commify(std::to_string(RuleI(Character, ItemHealAmtCap)));
+				   Strings::Commify(std::to_string(amount_cap));
 		}
 		if (attribute == "spell_dmg") {
+			int amount_cap = RuleI(Character, ItemSpellDmgCap);
+			if (RuleB(Character, ClairvoyanceIncreaseCaps)) {
+				amount_cap += client->GetClair();
+			}
 			return Strings::Commify(std::to_string(client->GetSpellDmg())) + " / " +
-				   Strings::Commify(std::to_string(RuleI(Character, ItemSpellDmgCap)));
+				   Strings::Commify(std::to_string(amount_cap));
 		}
 		if (attribute == "clairvoyance") {
 			return Strings::Commify(std::to_string(client->GetClair())) + " / " +
