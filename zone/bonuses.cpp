@@ -106,8 +106,6 @@ void Client::CalcBonuses()
 	CalcMaxMana();
 	CalcMaxEndurance();
 
-	//CalcSDAndHA(&itembonuses);
-
 	SetAttackTimer();
 
 	rooted = FindType(SE_Root);
@@ -378,11 +376,9 @@ void Mob::AddItemBonuses(const EQ::ItemInstance* inst, StatBonuses* b, bool is_a
 	b->ProcChance       = CalcCappedItemBonus(b->ProcChance, item->CombatEffects, RuleI(Character, ItemCombatEffectsCap));
 	b->DoTShielding     = CalcCappedItemBonus(b->DoTShielding, item->DotShielding, RuleI(Character, ItemDoTShieldingCap));
 	b->Clairvoyance     = CalcCappedItemBonus(b->Clairvoyance, item->Clairvoyance, RuleI(Character, ItemClairvoyanceCap));
-	//b->HealAmt          = CalcCappedItemBonus(b->HealAmt, item->HealAmt, (RuleI(Character, ItemHealAmtCap) + b->Clairvoyance));
-	//b->SpellDmg         = CalcCappedItemBonus(b->SpellDmg, item->SpellDmg, (RuleI(Character, ItemSpellDmgCap) + b->Clairvoyance));
 	b->DSMitigation     = CalcCappedItemBonus(b->DSMitigation, item->DSMitigation, RuleI(Character, ItemDSMitigationCap));
 	
-	//Special Case: These will be modified later by Clairvoyance
+	//Special Case: These can be modified later by Clairvoyance
 	b->SpellDmg	    += CalcItemBonus(item->SpellDmg);
 	b->HealAmt	    += CalcItemBonus(item->HealAmt);
 

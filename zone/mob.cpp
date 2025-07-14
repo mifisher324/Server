@@ -2573,7 +2573,7 @@ void Mob::SendStatsWindow(Client* c, bool use_window)
 	// Mod 2
 	final_string += DialogueWindow::Table(mod2_table) + DialogueWindow::Break(1);
 
-	// Heal Amount	
+	// Heal Amount
 	if (GetHealAmt()) {
 		final_string += fmt::format(
 			"Heal Amount: {} / {}{}",
