@@ -3894,7 +3894,7 @@ bool Mob::HasDiscBuff()
 // stacking problems, and -2 if this is not a buff
 // if caster is null, the buff will be added with the caster level being
 // the level of the mob
-int Mob::AddBuff(Mob *caster, uint16 spell_id, int duration, int32 level_override, bool disable_buff_overwrite)
+int Mob::AddBuff(Mob *caster, uint16 spell_id, int duration, int32 level_override, bool disable_buff_overwrite, bool override_short_duration)
 {
 	int buffslot, ret, caster_level, emptyslot = -1;
 	bool will_overwrite = false;
@@ -3926,8 +3926,18 @@ int Mob::AddBuff(Mob *caster, uint16 spell_id, int duration, int32 level_overrid
 	// we also check if overwriting will occur. this is so after this loop
 	// we can determine if there will be room for this buff
 	int buff_count = GetMaxTotalSlots();
-	uint32 start_slot = GetFirstBuffSlot(IsDisciplineBuff(spell_id), spells[spell_id].short_buff_box);
-	uint32 end_slot = GetLastBuffSlot(IsDisciplineBuff(spell_id), spells[spell_id].short_buff_box);
+	uint32 start_slot;
+	uint32 end_slot;
+	if (override_short_duration) {
+		start_slot = GetFirstBuffSlot(IsDisciplineBuff(spell_id), false);
+	} else {
+		start_slot = GetFirstBuffSlot(IsDisciplineBuff(spell_id), spells[spell_id].short_buff_box);
+	}
+	if (override_short_duration) {
+		end_slot = GetLastBuffSlot(IsDisciplineBuff(spell_id), false);
+	} else {
+		end_slot = GetLastBuffSlot(IsDisciplineBuff(spell_id), spells[spell_id].short_buff_box);
+	}
 
 	for (buffslot = 0; buffslot < buff_count; buffslot++) {
 		const Buffs_Struct &curbuf = buffs[buffslot];
@@ -4063,8 +4073,15 @@ int Mob::AddBuff(Mob *caster, uint16 spell_id, int duration, int32 level_overrid
 				return -1;
 			}
 		} else {
-			LogSpells("Unable to find a buff slot for beneficial buff [{}]", spell_id);
-			return -1;
+			// If this is a short duration buff, try again in the regular buff slots.
+			if (spells[spell_id].short_buff_box && !override_short_duration) {
+				LogSpells("Unable to find a buff slot for beneficial buff [{}] but it's short duration, trying regular buff slots.",
+					spell_id);
+				return AddBuff(caster, spell_id, duration, level_override, disable_buff_overwrite, true);
+			} else {
+				LogSpells("Unable to find a buff slot for beneficial buff [{}]", spell_id);
+				return -1;
+			}
 		}
 	}
 	//do not fade buff if from bard pulse, live does not give a fades message.
