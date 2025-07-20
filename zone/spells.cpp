@@ -4074,7 +4074,7 @@ int Mob::AddBuff(Mob *caster, uint16 spell_id, int duration, int32 level_overrid
 			}
 		} else {
 			// If this is a short duration buff, try again in the regular buff slots.
-			if (spells[spell_id].short_buff_box && !override_short_duration) {
+			if (RuleB(Character, ShortDurationOverflowIntoRegular) && spells[spell_id].short_buff_box && !override_short_duration) {
 				LogSpells("Unable to find a buff slot for beneficial buff [{}] but it's short duration, trying regular buff slots.",
 					spell_id);
 				return AddBuff(caster, spell_id, duration, level_override, disable_buff_overwrite, true);

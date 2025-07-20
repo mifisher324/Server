@@ -2969,6 +2969,10 @@ void ZoneDatabase::SaveBuffs(Client *client)
 			continue;
 		}
 
+		if (spells[buffs[slot_id].spellid].short_buff_box) {
+			continue;
+		}
+
 		bool suppressed = buffs[slot_id].spellid == SPELL_SUPPRESSED;
 
 		e.character_id   = client->CharacterID();
